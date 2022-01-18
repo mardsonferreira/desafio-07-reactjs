@@ -26,11 +26,16 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
     (fileList[0] && fileList[0].size / (1024 * 1024) < 10) ||
     'O arquivo deve ser menor que 10MB';
 
+  const acceptedFormats = (fileList: FileList): boolean | string =>
+    /\.(gif|jpeg|png)$/i.test(fileList[0].type.replace('/', '.')) ||
+    'Somente são aceitos arquivos PNG, JPEG e GIF';
+
   const formValidations: Record<string, Partial<Validate<unknown>>> = {
     image: {
       required: 'Arquivo obrigatório',
       validate: {
-        size: lessThan10MB,
+        lessThan10MB,
+        acceptedFormats,
       },
     },
     title: {
@@ -89,9 +94,16 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
         });
       }
     } catch {
-      // TODO SHOW ERROR TOAST IF SUBMIT FAILED
+      toast({
+        status: 'error',
+        title: 'Falha no cadastro',
+        description: 'Ocorreu um erro ao tentar cadastrar a sua imagem.',
+      });
     } finally {
-      // TODO CLEAN FORM, STATES AND CLOSE MODAL
+      reset();
+      setImageUrl('');
+      setLocalImageUrl('');
+      closeModal();
     }
   };
 
