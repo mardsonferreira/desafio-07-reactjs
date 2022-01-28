@@ -68,7 +68,9 @@ export function FormAddImage({ closeModal }: FormAddImageProps): JSX.Element {
       });
     },
     {
-      // TODO ONSUCCESS MUTATION
+      onSuccess: () => {
+        queryClient.invalidateQueries('images');
+      },
     }
   );
 
